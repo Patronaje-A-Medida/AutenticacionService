@@ -53,7 +53,7 @@ namespace AutenticacionService.Api.Controllers.v1
                 expires: expiration,
                 signingCredentials: creds
             );
-
+            
             return new UserClientToken
             {
                 Id = userClientRead.Id,

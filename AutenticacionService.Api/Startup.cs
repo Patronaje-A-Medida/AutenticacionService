@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutenticacionService.Api.ApiConventions;
+using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.Mapper;
 using AutenticacionService.Business.ServicesCommand.Implements;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
@@ -68,6 +69,7 @@ namespace AutenticacionService.Api
 
             // services
             services.AddScoped<IUserClientServiceCommand, UserClientServiceCommand>();
+            services.AddScoped<TokenBuilder>();
 
             // mapper
             var mapperConfig = new MapperConfiguration(

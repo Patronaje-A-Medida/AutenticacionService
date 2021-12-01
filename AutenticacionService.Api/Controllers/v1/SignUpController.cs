@@ -1,4 +1,5 @@
-﻿using AutenticacionService.Business.ServicesCommand.Interfaces;
+﻿using AutenticacionService.Api.Utils;
+using AutenticacionService.Business.ServicesCommand.Interfaces;
 using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,23 +22,23 @@ namespace AutenticacionService.Api.Controllers.v1
     public class SignUpController : ControllerBase
     {
         private readonly IUserClientServiceCommand _userClientServiceCommand;
-        private readonly IConfiguration _configuration;
+        private readonly TokenBuilder _tokenBuilder;
 
-        public SignUpController(IUserClientServiceCommand userClientServiceCommand, IConfiguration configuration)
+        public SignUpController(IUserClientServiceCommand userClientServiceCommand, TokenBuilder tokenBuilder)
         {
             _userClientServiceCommand = userClientServiceCommand;
-            _configuration = configuration;
+            _tokenBuilder = tokenBuilder;
         }
 
         [HttpPost("users-client")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<ActionResult<UserToken>> SignUpUserClient(UserClientCreate userClientCreate)
+        public async Task<ActionResult<UserClientToken>> SignUpUserClient(UserClientCreate userClientCreate)
         {
             if (ModelState.IsValid)
             {
                 var result = await _userClientServiceCommand.Create(userClientCreate);
-                var userToken = BuildToken(result);
+                var userToken = _tokenBuilder.BuildClientToken(result);
                 return Ok(userToken);
             }
             else
@@ -52,48 +53,11 @@ namespace AutenticacionService.Api.Controllers.v1
             }
         }
 
-
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CLIENTE")]
         public IActionResult Test()
         {
             return Ok("prueba jwt scheme");
-        }
-
-        private UserToken BuildToken(UserClientRead userClientRead)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userClientRead.Email),
-                new Claim(ClaimTypes.NameIdentifier, userClientRead.UserId),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, userClientRead.Role)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddHours(1);
-
-            JwtSecurityToken token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
-                claims: claims,
-                expires: expiration,
-                signingCredentials: creds
-            );
-
-            return new UserClientToken
-            {
-                Id = userClientRead.Id,
-                Email = userClientRead.Email,
-                NameUser = userClientRead.NameUser,
-                LastNameUser = userClientRead.LastNameUser,
-                Height = userClientRead.Height,
-                Phone = userClientRead.Phone,
-                Role = userClientRead.Role,
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
-            };
         }
     }
 }
