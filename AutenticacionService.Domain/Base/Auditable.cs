@@ -18,5 +18,9 @@ namespace AutenticacionService.Domain.Base
         
         [Column(TypeName = "nvarchar(100)")]
         public string ModifiedBy { get; set; }
+
+        [Required]
+        [Column(TypeName = "bit")]
+        public bool Status { get; set; }
     }
 }
