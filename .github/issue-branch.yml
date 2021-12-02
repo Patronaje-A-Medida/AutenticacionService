@@ -1,0 +1,14 @@
+mode: auto
+defaultBranch: 'develop'
+branches:
+  - label: enhancement
+    name: develop
+    prefix: feature/
+  - label: feature
+    name: develop
+    prefix: feature/
+  - label: bug
+    name: develop
+    prefix: bugfix/
+  - label: '*'
+    name: develop
