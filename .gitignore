@@ -341,3 +341,4 @@ healthchecksdb
 
 # Github workflows config
 .github/
+.github/*
