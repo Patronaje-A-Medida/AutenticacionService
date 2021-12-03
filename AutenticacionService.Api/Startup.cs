@@ -63,12 +63,14 @@ namespace AutenticacionService.Api
             // repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserClientRepository, UserClientRepository>();
+            services.AddScoped<IUserAtelierRepository, UserAtelierRepository>();
 
             // unit of work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // services
             services.AddScoped<IUserClientServiceCommand, UserClientServiceCommand>();
+            services.AddScoped<IUserAtelierServiceCommand, UserAtelierServiceCommand>();
             services.AddScoped<TokenBuilder>();
 
             // mapper

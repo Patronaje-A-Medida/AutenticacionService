@@ -38,6 +38,21 @@ namespace AutenticacionService.Api.Utils
             };
         }
 
+        public UserAtelierToken BuildAtelierToken(UserAtelierRead userAtelierRead)
+        {
+            var token = BuildToken(userAtelierRead.UserId, userAtelierRead.Email, userAtelierRead.Role);
+
+            return new UserAtelierToken
+            {
+                UserInfo = userAtelierRead,
+                UserToken = new UserToken
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expiration = token.ValidTo
+                }
+            };
+        }
+
         private JwtSecurityToken BuildToken(string id, string email, string role)
         {
             var claims = new List<Claim>
