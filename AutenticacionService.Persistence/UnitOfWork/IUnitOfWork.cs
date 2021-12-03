@@ -9,6 +9,7 @@ namespace AutenticacionService.Persistence.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         IUserClientRepository userClientRepository { get; }
+        IUserAtelierRepository userAtelierRepository { get; }
 
         Task SaveChangesAsync();
     }

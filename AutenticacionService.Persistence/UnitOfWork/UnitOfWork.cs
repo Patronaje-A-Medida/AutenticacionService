@@ -12,11 +12,13 @@ namespace AutenticacionService.Persistence.UnitOfWork
     {
         private readonly AuthDbContext _context;
         public IUserClientRepository userClientRepository { get; private set; }
+        public IUserAtelierRepository userAtelierRepository { get; private set; }
 
         public UnitOfWork(AuthDbContext context)
         {
             _context = context;
             userClientRepository = new UserClientRepository(_context);
+            userAtelierRepository = new UserAtelierRepository(_context);
         }
 
         public void Dispose()
