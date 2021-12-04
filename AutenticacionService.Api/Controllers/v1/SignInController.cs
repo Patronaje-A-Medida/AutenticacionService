@@ -54,18 +54,7 @@ namespace AutenticacionService.Api.Controllers.v1
                 signingCredentials: creds
             );
             
-            return new UserClientToken
-            {
-                Id = userClientRead.Id,
-                Email = userClientRead.Email,
-                NameUser = userClientRead.NameUser,
-                LastNameUser = userClientRead.LastNameUser,
-                Height = userClientRead.Height,
-                Phone = userClientRead.Phone,
-                Role = userClientRead.Role,
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
-            };
+            return new UserToken();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-client")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<ActionResult<UserClientToken>> SignUpUserClient(UserClientCreate userClientCreate)
+        public async Task<ActionResult<UserClientToken>> SignUpUserClient([FromBody] UserClientCreate userClientCreate)
         {
             if (ModelState.IsValid)
             {
@@ -62,7 +62,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-owner")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<ActionResult<UserAtelierToken>> SignUpUserOwner(UserOwnerCreate userOwnerCreate)
+        public async Task<ActionResult<UserAtelierToken>> SignUpUserOwner([FromBody] UserOwnerCreate userOwnerCreate)
         {
             if (!ModelState.IsValid)
             {
@@ -75,7 +75,28 @@ namespace AutenticacionService.Api.Controllers.v1
                 return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
             }
 
-            var result = await _userAtelierServiceCommand.Create(userOwnerCreate);
+            var result = await _userAtelierServiceCommand.CreateOwner(userOwnerCreate);
+            var userToken = _tokenBuilder.BuildAtelierToken(result);
+            return Ok(userToken);
+        }
+
+        [HttpPost("users-technician")]
+        [ProducesResponseType(typeof(UserClientToken), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<ActionResult<UserAtelierToken>> SignUpUserTechnician([FromBody] UserTechnicianCreate userTechnicianCreate)
+        {
+            if (!ModelState.IsValid)
+            {
+                string err = string.Join(
+                    "; ",
+                    ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage));
+
+                return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
+            }
+
+            var result = await _userAtelierServiceCommand.CreateTechnician(userTechnicianCreate);
             var userToken = _tokenBuilder.BuildAtelierToken(result);
             return Ok(userToken);
         }
@@ -92,6 +113,13 @@ namespace AutenticacionService.Api.Controllers.v1
         public IActionResult Test2()
         {
             return Ok("prueba jwt scheme - OWNER");
+        }
+
+        [HttpGet("3-test")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "TECHNICIAN")]
+        public IActionResult Test3()
+        {
+            return Ok("prueba jwt scheme - TECHNICIAN");
         }
     }
 }
