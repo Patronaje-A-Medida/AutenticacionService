@@ -29,16 +29,32 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             _signInManager = signInManager;
         }
 
-        public async Task<UserAtelierRead> Create(UserOwnerCreate userOwnerCreate)
+        public async Task<UserAtelierRead> CreateOwner(UserOwnerCreate userOwnerCreate)
         {
             var userBase = _mapper.Map<UserBase>(userOwnerCreate);
-            string userPassword = userOwnerCreate.Password;
-            var createdUser = await _userManager.CreateAsync(userBase, userPassword);
+            var userAtelier = _mapper.Map<UserAtelier>(userOwnerCreate);
+            var result = await Create(userBase, userAtelier, userOwnerCreate.Password);
+            return result;
+        }
+
+        public async Task<UserAtelierRead> CreateTechnician(UserTechnicianCreate userTechnicianCreate)
+        {
+            var userBase = _mapper.Map<UserBase>(userTechnicianCreate);
+            var userAtelier = _mapper.Map<UserAtelier>(userTechnicianCreate);
+            var result = await Create(userBase, userAtelier, userTechnicianCreate.Password);
+            return result;
+        }
+
+        private async Task<UserAtelierRead> Create(UserBase userBase, UserAtelier userAtelier, string password)
+        {
+            //var userBase = _mapper.Map<UserBase>(userOwnerCreate);
+            //string userPassword = userOwnerCreate.Password;
+            var createdUser = await _userManager.CreateAsync(userBase, password);
 
             if (!createdUser.Succeeded) throw new Exception("error userbase");
 
             var user = await _userManager.FindByEmailAsync(userBase.Email);
-            var userAtelier = _mapper.Map<UserAtelier>(userOwnerCreate);
+            //var userAtelier = _mapper.Map<UserAtelier>(userOwnerCreate);
             userAtelier.UserId = user.Id;
             var createdUserAtelier = await _uow.userAtelierRepository.Add(userAtelier);
 

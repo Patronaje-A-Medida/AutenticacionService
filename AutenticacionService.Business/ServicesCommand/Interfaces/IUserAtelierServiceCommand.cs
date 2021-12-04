@@ -5,6 +5,7 @@ namespace AutenticacionService.Business.ServicesCommand.Interfaces
 {
     public interface IUserAtelierServiceCommand
     {
-        Task<UserAtelierRead> Create(UserOwnerCreate userOwnerCreate);
+        Task<UserAtelierRead> CreateOwner(UserOwnerCreate userOwnerCreate);
+        Task<UserAtelierRead> CreateTechnician(UserTechnicianCreate userTechnicianCreate);
     }
 }
