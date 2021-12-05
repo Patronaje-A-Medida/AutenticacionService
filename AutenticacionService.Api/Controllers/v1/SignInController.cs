@@ -1,4 +1,6 @@
-﻿using AutenticacionService.Business.ServicesCommand.Interfaces;
+﻿using AutenticacionService.Api.Utils;
+using AutenticacionService.Business.ServicesCommand.Interfaces;
+using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,47 +16,38 @@ using System.Threading.Tasks;
 namespace AutenticacionService.Api.Controllers.v1
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/sign-in")]
+    [Produces("application/json")]
     public class SignInController : ControllerBase
     {
-        private readonly IUserClientServiceCommand _serviceCommand;
-        private readonly IConfiguration _configuration;
+        private readonly IUserClientServiceQuery _userClientServiceQuery;
+        private readonly TokenBuilder _tokenBuilder;
 
-        public SignInController(IUserClientServiceCommand serviceCommand, IConfiguration configuration)
+        public SignInController(IUserClientServiceQuery userClientServiceQuery, TokenBuilder tokenBuilder)
         {
-            _serviceCommand = serviceCommand;
-            _configuration = configuration;
+            _userClientServiceQuery = userClientServiceQuery;
+            _tokenBuilder = tokenBuilder;
         }
 
-        /*[HttpPost()]
-        public async Task<ActionResult<UserToken>> SignInUserClient([FromBody] UserClientCreate)
+        [HttpPost("users-client")]
+        [ProducesResponseType(typeof(UserClientToken), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<ActionResult<UserToken>> SignInUserClient([FromBody] UserLogin userLogin)
         {
-
-        }*/
-
-        private UserToken BuildToken(UserClientRead userClientRead)
-        {
-            var claims = new List<Claim>
+            if (!ModelState.IsValid)
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userClientRead.Email),
-                new Claim(ClaimTypes.NameIdentifier, userClientRead.UserId),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, userClientRead.Role)
-            };
+                string err = string.Join(
+                    "; ",
+                    ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddHours(1);
+                return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
+            }
 
-            JwtSecurityToken token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
-                claims: claims,
-                expires: expiration,
-                signingCredentials: creds
-            );
-            
-            return new UserToken();
+            var result = await _userClientServiceQuery.SignIn(userLogin);
+            var userToken = _tokenBuilder.BuildClientToken(result);
+            return Ok(userToken);
         }
     }
 }
