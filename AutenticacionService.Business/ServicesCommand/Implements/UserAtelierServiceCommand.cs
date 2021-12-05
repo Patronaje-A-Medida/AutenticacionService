@@ -47,14 +47,11 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
 
         private async Task<UserAtelierRead> Create(UserBase userBase, UserAtelier userAtelier, string password)
         {
-            //var userBase = _mapper.Map<UserBase>(userOwnerCreate);
-            //string userPassword = userOwnerCreate.Password;
             var createdUser = await _userManager.CreateAsync(userBase, password);
 
             if (!createdUser.Succeeded) throw new Exception("error userbase");
 
             var user = await _userManager.FindByEmailAsync(userBase.Email);
-            //var userAtelier = _mapper.Map<UserAtelier>(userOwnerCreate);
             userAtelier.UserId = user.Id;
             var createdUserAtelier = await _uow.userAtelierRepository.Add(userAtelier);
 
