@@ -8,6 +8,8 @@ using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.Mapper;
 using AutenticacionService.Business.ServicesCommand.Implements;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
+using AutenticacionService.Business.ServicesQuerys.Implements;
+using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Base;
 using AutenticacionService.Persistence.Context;
 using AutenticacionService.Persistence.Repositories.Implements;
@@ -44,6 +46,7 @@ namespace AutenticacionService.Api
             // db connection
             services.AddDbContext<AuthDbContext>(
                 opts => opts.UseSqlServer(Configuration.GetConnectionString("LocalConnection"))
+                            .LogTo(Console.WriteLine)
                 );
 
             // ms identity
@@ -71,6 +74,7 @@ namespace AutenticacionService.Api
             // services
             services.AddScoped<IUserClientServiceCommand, UserClientServiceCommand>();
             services.AddScoped<IUserAtelierServiceCommand, UserAtelierServiceCommand>();
+            services.AddScoped<IUserClientServiceQuery, UserClientServiceQuery>();
             services.AddScoped<TokenBuilder>();
 
             // mapper

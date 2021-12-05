@@ -35,22 +35,17 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
         {
             var userBase = _mapper.Map<UserBase>(userClientCreate);
             string userPassword = userClientCreate.Password;
-            string userRole = userBase.Role;
             var createdUser = await _userManager.CreateAsync(userBase, userPassword);
 
-            if (createdUser.Succeeded)
-            {
-                var user = await _userManager.FindByEmailAsync(userBase.Email);
-                var userClient = _mapper.Map<UserClient>(userClientCreate);
-                userClient.UserId = user.Id;
-                var createdUserClient = await _uow.userClientRepository.Add(userClient);
-                await _uow.SaveChangesAsync();
-                var userClientRead = _mapper.Map<UserClientRead>(createdUserClient);
-                return userClientRead;
-            }
-            else
-                return null;
+            if (!createdUser.Succeeded) throw new Exception("error service sign up");
 
+            var user = await _userManager.FindByEmailAsync(userBase.Email);
+            var userClient = _mapper.Map<UserClient>(userClientCreate);
+            userClient.UserId = user.Id;
+            var createdUserClient = await _uow.userClientRepository.Add(userClient);
+            await _uow.SaveChangesAsync();
+            var userClientRead = _mapper.Map<UserClientRead>(createdUserClient);
+            return userClientRead;
         }
     }
 }

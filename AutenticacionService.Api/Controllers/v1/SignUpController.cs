@@ -41,13 +41,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [ProducesResponseType(typeof(string), 400)]
         public async Task<ActionResult<UserClientToken>> SignUpUserClient([FromBody] UserClientCreate userClientCreate)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _userClientServiceCommand.Create(userClientCreate);
-                var userToken = _tokenBuilder.BuildClientToken(result);
-                return Ok(userToken);
-            }
-            else
+            if (!ModelState.IsValid)
             {
                 string err = string.Join(
                     "; ",
@@ -57,6 +51,10 @@ namespace AutenticacionService.Api.Controllers.v1
 
                 return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
             }
+
+            var result = await _userClientServiceCommand.Create(userClientCreate);
+            var userToken = _tokenBuilder.BuildClientToken(result);
+            return Ok(userToken);
         }
 
         [HttpPost("users-owner")]
