@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace AutenticacionService.Business.ServicesQuerys.Interfaces
 {
-    public interface IUserClientServiceQuery
+    public interface IUserAtelierServiceQuery
     {
-        Task<UserClientRead> SignIn(UserLogin userLogin);
+        Task<UserAtelierRead> SignIn(UserLogin userLogin);
     }
 }
