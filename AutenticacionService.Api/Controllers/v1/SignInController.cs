@@ -29,7 +29,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-client")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<ActionResult<UserToken>> SignInUserClient([FromBody] UserLogin userLogin)
+        public async Task<ActionResult<UserClientToken>> SignInUserClient([FromBody] UserLogin userLogin)
         {
             if (!ModelState.IsValid)
             {
@@ -50,7 +50,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-atelier")]
         [ProducesResponseType(typeof(UserAtelierToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public async Task<ActionResult<UserToken>> SignInUserAtelier([FromBody] UserLogin userLogin)
+        public async Task<ActionResult<UserAtelierToken>> SignInUserAtelier([FromBody] UserLogin userLogin)
         {
             if (!ModelState.IsValid)
             {

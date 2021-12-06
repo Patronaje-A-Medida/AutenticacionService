@@ -33,7 +33,9 @@ namespace AutenticacionService.Business.ServicesQuerys.Implements
         {
             var userBase = await _userManager.FindByEmailAsync(userLogin.Email);
 
-            if (!userBase.Role.Equals(RolesUtil.OWNER)) throw new Exception("error service wrong role");
+            if (!userBase.Role.Equals(RolesUtil.OWNER) && 
+                !userBase.Role.Equals(RolesUtil.TECHNICIAN)) 
+                throw new Exception("error service wrong role");
 
             var checkPassword = await _userManager.CheckPasswordAsync(userBase, userLogin.Password);
 

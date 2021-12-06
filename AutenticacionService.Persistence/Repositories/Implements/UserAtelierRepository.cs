@@ -1,4 +1,5 @@
 ﻿using AutenticacionService.Domain.Entities;
+using AutenticacionService.Domain.Utils;
 using AutenticacionService.Persistence.Context;
 using AutenticacionService.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace AutenticacionService.Persistence.Repositories.Implements
                 .Include(u => u.User)
                 .Where(u => u.UserId.Equals(userId))
                 .Where(u => u.User.Role.Equals(role))
+                .Where(u => u.Status && u.User.Status.Equals(StatusUtil.USER_ACTIVE))
                 .FirstOrDefaultAsync();
 
             if (result == null) throw new Exception("error repo user null");
