@@ -21,6 +21,7 @@ namespace AutenticacionService.Persistence.Repositories.Implements
                 .Include(u => u.User)
                 .Where(u => u.UserId.Equals(userId))
                 .Where(u => u.User.Role.Equals(RolesUtil.CLIENT))
+                .Where(u => u.Status && u.User.Status.Equals(StatusUtil.USER_ACTIVE))
                 .FirstOrDefaultAsync();
 
             if (result == null) throw new Exception("error repo user null");
