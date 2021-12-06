@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace AutenticacionService.Business.ServicesQuerys.Implements
 {
-    public class UserClientServiceQuery : IUserClientServiceQuery
+    public class UserAtelierServiceQuery : IUserAtelierServiceQuery
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly UserManager<UserBase> _userManager;
         private readonly SignInManager<UserBase> _signInManager;
 
-        public UserClientServiceQuery(
+        public UserAtelierServiceQuery(
             IUnitOfWork uow, 
-            IMapper mapper, 
-            UserManager<UserBase> userManager, 
+            IMapper mapper,
+            UserManager<UserBase> userManager,
             SignInManager<UserBase> signInManager)
         {
             _uow = uow;
@@ -29,11 +29,11 @@ namespace AutenticacionService.Business.ServicesQuerys.Implements
             _signInManager = signInManager;
         }
 
-        public async Task<UserClientRead> SignIn(UserLogin userLogin)
+        public async Task<UserAtelierRead> SignIn(UserLogin userLogin)
         {
             var userBase = await _userManager.FindByEmailAsync(userLogin.Email);
 
-            if (!userBase.Role.Equals(RolesUtil.CLIENT)) throw new Exception("error service wrong role");
+            if (!userBase.Role.Equals(RolesUtil.OWNER)) throw new Exception("error service wrong role");
 
             var checkPassword = await _userManager.CheckPasswordAsync(userBase, userLogin.Password);
 
@@ -49,9 +49,9 @@ namespace AutenticacionService.Business.ServicesQuerys.Implements
 
             if (signInResult.IsLockedOut) throw new Exception("error service user blocked"); // TODO agregar logica de bloqueo
 
-            var userClient = await _uow.userClientRepository.GetByUserId(userBase.Id);
-            var userClientRead = _mapper.Map<UserClientRead>(userClient);
-            return userClientRead;
+            var userAtelier = await _uow.userAtelierRepository.GetByUserId_Role(userBase.Id, userBase.Role);
+            var userAtelierRead = _mapper.Map<UserAtelierRead>(userAtelier);
+            return userAtelierRead;
         }
     }
 }
