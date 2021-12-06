@@ -91,25 +91,12 @@ namespace AutenticacionService.Api.Controllers.v1
             return Ok(userToken);
         }
 
-        [HttpGet("1-test")]
+        /*[HttpGet("1-test")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "CLIENT")]
         public IActionResult Test()
         {
             return Ok("prueba jwt scheme - CLIENT");
-        }
+        }*/
 
-        [HttpGet("2-test")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "OWNER")]
-        public IActionResult Test2()
-        {
-            return Ok("prueba jwt scheme - OWNER");
-        }
-
-        [HttpGet("3-test")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "TECHNICIAN")]
-        public IActionResult Test3()
-        {
-            return Ok("prueba jwt scheme - TECHNICIAN");
-        }
     }
 }
