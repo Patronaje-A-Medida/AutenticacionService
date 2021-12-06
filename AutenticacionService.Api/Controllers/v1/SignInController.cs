@@ -1,16 +1,8 @@
 ﻿using AutenticacionService.Api.Utils;
-using AutenticacionService.Business.ServicesCommand.Interfaces;
 using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutenticacionService.Api.Controllers.v1
@@ -21,11 +13,16 @@ namespace AutenticacionService.Api.Controllers.v1
     public class SignInController : ControllerBase
     {
         private readonly IUserClientServiceQuery _userClientServiceQuery;
+        private readonly IUserAtelierServiceQuery _userAtelierServiceQuery;
         private readonly TokenBuilder _tokenBuilder;
 
-        public SignInController(IUserClientServiceQuery userClientServiceQuery, TokenBuilder tokenBuilder)
+        public SignInController(
+            IUserClientServiceQuery userClientServiceQuery, 
+            IUserAtelierServiceQuery userAtelierServiceQuery, 
+            TokenBuilder tokenBuilder)
         {
             _userClientServiceQuery = userClientServiceQuery;
+            _userAtelierServiceQuery = userAtelierServiceQuery;
             _tokenBuilder = tokenBuilder;
         }
 
@@ -49,5 +46,27 @@ namespace AutenticacionService.Api.Controllers.v1
             var userToken = _tokenBuilder.BuildClientToken(result);
             return Ok(userToken);
         }
+
+        [HttpPost("users-atelier")]
+        [ProducesResponseType(typeof(UserAtelierToken), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<ActionResult<UserToken>> SignInUserAtelier([FromBody] UserLogin userLogin)
+        {
+            if (!ModelState.IsValid)
+            {
+                string err = string.Join(
+                    "; ",
+                    ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage));
+
+                return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
+            }
+
+            var result = await _userAtelierServiceQuery.SignIn(userLogin);
+            var userToken = _tokenBuilder.BuildAtelierToken(result);
+            return Ok(userToken);
+        }
+
     }
 }

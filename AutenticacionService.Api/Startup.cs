@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using AutenticacionService.Api.ApiConventions;
 using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.Mapper;
@@ -75,6 +72,7 @@ namespace AutenticacionService.Api
             services.AddScoped<IUserClientServiceCommand, UserClientServiceCommand>();
             services.AddScoped<IUserAtelierServiceCommand, UserAtelierServiceCommand>();
             services.AddScoped<IUserClientServiceQuery, UserClientServiceQuery>();
+            services.AddScoped<IUserAtelierServiceQuery, UserAtelierServiceQuery>();
             services.AddScoped<TokenBuilder>();
 
             // mapper

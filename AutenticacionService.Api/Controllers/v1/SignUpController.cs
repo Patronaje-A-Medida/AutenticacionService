@@ -1,18 +1,10 @@
 ﻿using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
 using AutenticacionService.Domain.Models;
-using AutenticacionService.Domain.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AutenticacionService.Api.Controllers.v1
@@ -58,7 +50,7 @@ namespace AutenticacionService.Api.Controllers.v1
         }
 
         [HttpPost("users-owner")]
-        [ProducesResponseType(typeof(UserClientToken), 200)]
+        [ProducesResponseType(typeof(UserAtelierToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<ActionResult<UserAtelierToken>> SignUpUserOwner([FromBody] UserOwnerCreate userOwnerCreate)
         {
@@ -79,7 +71,7 @@ namespace AutenticacionService.Api.Controllers.v1
         }
 
         [HttpPost("users-technician")]
-        [ProducesResponseType(typeof(UserClientToken), 200)]
+        [ProducesResponseType(typeof(UserAtelierToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public async Task<ActionResult<UserAtelierToken>> SignUpUserTechnician([FromBody] UserTechnicianCreate userTechnicianCreate)
         {
