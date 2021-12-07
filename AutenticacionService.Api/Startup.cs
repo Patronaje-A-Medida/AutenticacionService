@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using AutenticacionService.Api.ApiConventions;
+using AutenticacionService.Api.Extensions;
 using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.Mapper;
 using AutenticacionService.Business.ServicesCommand.Implements;
@@ -149,8 +150,10 @@ namespace AutenticacionService.Api
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
             }
+
+            app.UseExceptionMiddleware();
 
             app.UseCors("All");
 
