@@ -1,12 +1,15 @@
 ﻿using AutenticacionService.Persistence.Context;
+using AutenticacionService.Persistence.Handlers;
 using AutenticacionService.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Persistence.Repositories.Implements
 {
@@ -21,8 +24,16 @@ namespace AutenticacionService.Persistence.Repositories.Implements
 
         public virtual async Task<TEntity> Add(TEntity entity)
         {
-            await _context.Set<TEntity>().AddAsync(entity);
-            return entity;
+            try
+            {
+                await _context.Set<TEntity>().AddAsync(entity);
+                return entity;
+            }
+            catch (Exception)
+            {
+                throw new RepositoryException(HttpStatusCode.InternalServerError, 
+                    ErrorsCode.ADD_CONTEXT_ERROR, ErrorMessages.ADD_CONTEXT_ERROR);
+            }
         }
 
         public virtual async Task<bool> Add(IEnumerable<TEntity> entities)

@@ -1,5 +1,6 @@
 ﻿using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
+using AutenticacionService.Domain.Base;
 using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-client")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetail), 500)]
         public async Task<ActionResult<UserClientToken>> SignUpUserClient([FromBody] UserClientCreate userClientCreate)
         {
             if (!ModelState.IsValid)
@@ -52,6 +54,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-owner")]
         [ProducesResponseType(typeof(UserAtelierToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetail), 500)]
         public async Task<ActionResult<UserAtelierToken>> SignUpUserOwner([FromBody] UserOwnerCreate userOwnerCreate)
         {
             if (!ModelState.IsValid)
@@ -73,6 +76,7 @@ namespace AutenticacionService.Api.Controllers.v1
         [HttpPost("users-technician")]
         [ProducesResponseType(typeof(UserAtelierToken), 200)]
         [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetail), 500)]
         public async Task<ActionResult<UserAtelierToken>> SignUpUserTechnician([FromBody] UserTechnicianCreate userTechnicianCreate)
         {
             if (!ModelState.IsValid)
