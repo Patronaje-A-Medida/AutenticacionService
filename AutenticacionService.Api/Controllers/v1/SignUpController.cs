@@ -5,6 +5,7 @@ using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,6 +102,46 @@ namespace AutenticacionService.Api.Controllers.v1
         {
             return Ok("prueba jwt scheme - CLIENT");
         }*/
+
+        [HttpPost("test-sign-up")]
+        public ActionResult<UserAtelierToken> TestPorquesi([FromBody] UserOwnerCreate userOwnerCreate)
+        {
+            var ss = new UserAtelierToken
+            {
+                UserInfo = new UserAtelierRead
+                {
+                    Id = 1,
+                    UserId = "abcdexys",
+                    NameUser = userOwnerCreate.NameUser,
+                    LastNameUser = userOwnerCreate.LastNameUser,
+                    Dni = userOwnerCreate.Dni,
+                    AtelierId = 1,
+                    Email = userOwnerCreate.Email,
+                    Role = "OWNER"
+                },
+
+                UserToken = new UserToken
+                {
+                   Expiration = DateTime.Now,
+                   Token = "SUPERRECOTNRARCHMEGRAULTRASECRETOTROKEN"
+                }
+            };
+
+            return Ok(ss);
+        }
+
+        [HttpGet("error-test")]
+        public IActionResult TestPorqueNo()
+        {
+            var err = new ErrorDetail
+            {
+                statusCode = 500,
+                errorCode = 10001,
+                message = "error forzado"
+            };
+
+            return BadRequest(err);
+        }
 
     }
 }

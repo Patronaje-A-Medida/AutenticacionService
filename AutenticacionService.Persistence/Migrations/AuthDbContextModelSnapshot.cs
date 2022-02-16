@@ -234,13 +234,13 @@ namespace AutenticacionService.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("UserClients");
                 });
@@ -399,7 +399,9 @@ namespace AutenticacionService.Persistence.Migrations
                 {
                     b.HasOne("AutenticacionService.Domain.Base.UserBase", "User")
                         .WithOne()
-                        .HasForeignKey("AutenticacionService.Domain.Entities.UserClient", "UserId");
+                        .HasForeignKey("AutenticacionService.Domain.Entities.UserClient", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

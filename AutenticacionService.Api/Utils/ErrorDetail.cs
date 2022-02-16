@@ -1,16 +1,12 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutenticacionService.Api.Utils
 {
     public class ErrorDetail
     {
-        public int StatusCode;
-        public int ErrorCode;
-        public string Message;
+        public int statusCode { get; set; }
+        public int errorCode { get; set; }
+        public string message { get; set; }
 
         public override string ToString()
         {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AutenticacionService.Persistence.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialAuthDemo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -188,7 +188,7 @@ namespace AutenticacionService.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Height = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(13)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
@@ -203,7 +203,7 @@ namespace AutenticacionService.Persistence.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -294,8 +294,7 @@ namespace AutenticacionService.Persistence.Migrations
                 name: "IX_UserClients_UserId",
                 table: "UserClients",
                 column: "UserId",
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

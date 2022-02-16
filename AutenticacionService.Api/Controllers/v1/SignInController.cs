@@ -49,7 +49,8 @@ namespace AutenticacionService.Api.Controllers.v1
 
         [HttpPost("users-atelier")]
         [ProducesResponseType(typeof(UserAtelierToken), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetail), 400)]
+        [ProducesResponseType(typeof(ErrorDetail), 500)]
         public async Task<ActionResult<UserAtelierToken>> SignInUserAtelier([FromBody] UserLogin userLogin)
         {
             if (!ModelState.IsValid)
@@ -60,7 +61,7 @@ namespace AutenticacionService.Api.Controllers.v1
                         .SelectMany(x => x.Errors)
                         .Select(x => x.ErrorMessage));
 
-                return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
+                return BadRequest(new { statusCode = 400, errorCode = 10001, erroMessage = err });
             }
 
             var result = await _userAtelierServiceQuery.SignIn(userLogin);

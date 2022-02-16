@@ -44,7 +44,7 @@ namespace AutenticacionService.Api
             // db connection
             services.AddDbContext<AuthDbContext>(
                 opts => opts.UseSqlServer(Configuration.GetConnectionString("LocalConnection"))
-                            .LogTo(Console.WriteLine)
+                            //.LogTo(Console.WriteLine)
                 );
 
             // ms identity
@@ -57,6 +57,7 @@ namespace AutenticacionService.Api
                     opts.Password.RequireDigit = true;
                     opts.Password.RequireNonAlphanumeric = false;
                     opts.User.RequireUniqueEmail = true;
+                    opts.User.AllowedUserNameCharacters = "abcdefghijklmnÒopqrstuvwxyzABCDEFGHIJKLMN—OPQRSTUVWXYZ0123456789-._@+·ÈÌÛ˙¡…Õ”⁄";
                 })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();

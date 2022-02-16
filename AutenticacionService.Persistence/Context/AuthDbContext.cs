@@ -4,7 +4,6 @@ using AutenticacionService.Domain.Utils;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +36,7 @@ namespace AutenticacionService.Persistence.Context
                     eb.HasKey(e => e.Id);
                     eb.Property(e => e.Height).HasColumnType("decimal(6,2)").IsRequired();
                     eb.Property(e => e.Phone).HasColumnType("nvarchar(13)").IsRequired();
-                    eb.HasOne(e => e.User).WithOne();
+                    eb.HasOne(e => e.User).WithOne().IsRequired();
                 });
 
             builder.Entity<UserAtelier>(

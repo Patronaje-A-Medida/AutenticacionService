@@ -47,9 +47,9 @@ namespace AutenticacionService.Api.Middlewares
             {
                 result = new ErrorDetail
                 {
-                    StatusCode = (int)ex.StatusCode,
-                    ErrorCode = ex.ErrorCode,
-                    Message = ex.Message,
+                    statusCode = (int)ex.StatusCode,
+                    errorCode = ex.ErrorCode,
+                    message = ex.Message,
                 }.ToString();
 
                 context.Response.StatusCode = (int)ex.StatusCode;
@@ -58,9 +58,9 @@ namespace AutenticacionService.Api.Middlewares
             {
                 result = new ErrorDetail
                 {
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
-                    ErrorCode = ErrorsCode.GENERIC_ERROR,
-                    Message = ErrorMessages.GENERIC_ERROR,
+                    statusCode = (int)HttpStatusCode.InternalServerError,
+                    errorCode = ErrorsCode.GENERIC_ERROR,
+                    message = ErrorMessages.GENERIC_ERROR,
                 }.ToString();
 
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -78,9 +78,9 @@ namespace AutenticacionService.Api.Middlewares
             {
                 result = new ErrorDetail
                 {
-                    StatusCode = (int)ex.StatusCode,
-                    ErrorCode = ex.ErrorCode,
-                    Message = ex.Message,
+                    statusCode = (int)ex.StatusCode,
+                    errorCode = ex.ErrorCode,
+                    message = ex.Message,
                 }.ToString();
 
                 context.Response.StatusCode = (int)ex.StatusCode;
@@ -89,9 +89,9 @@ namespace AutenticacionService.Api.Middlewares
             {
                 result = new ErrorDetail
                 {
-                    StatusCode = (int)HttpStatusCode.InternalServerError,
-                    ErrorCode = ErrorsCode.GENERIC_ERROR,
-                    Message = ErrorMessages.GENERIC_ERROR,
+                    statusCode = (int)HttpStatusCode.InternalServerError,
+                    errorCode = ErrorsCode.GENERIC_ERROR,
+                    message = ErrorMessages.GENERIC_ERROR,
                 }.ToString();
 
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -102,11 +102,13 @@ namespace AutenticacionService.Api.Middlewares
 
         private Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
+            context.Response.ContentType = "application/json";
+
             string result = new ErrorDetail
             {
-                StatusCode = (int)HttpStatusCode.InternalServerError,
-                ErrorCode = ErrorsCode.GENERIC_ERROR,
-                Message = ex.Message
+                statusCode = (int)HttpStatusCode.InternalServerError,
+                errorCode = ErrorsCode.GENERIC_ERROR,
+                message = ex.Message
             }.ToString();
 
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

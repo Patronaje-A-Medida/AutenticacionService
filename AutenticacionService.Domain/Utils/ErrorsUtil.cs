@@ -16,7 +16,7 @@ namespace AutenticacionService.Domain.Utils
         public static class ErrorMessages
         {
             public static readonly string GENERIC_ERROR = "Error Interno del Sistema";
-            public static readonly string ADD_CONTEXT_ERROR = "No se pudo guardar el registro en la base de datos";
+            public static readonly string ADD_CONTEXT_ERROR = "No se pudo guardar el registro";
             public static readonly string USER_REGISTER_FAILED = "No se pudo registrar el usuario";
         }
     }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutenticacionService.Persistence.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20211202123319_Initial")]
-    partial class Initial
+    [Migration("20220213215516_InitialAuthDemo")]
+    partial class InitialAuthDemo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -236,13 +236,13 @@ namespace AutenticacionService.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("UserClients");
                 });
@@ -401,7 +401,9 @@ namespace AutenticacionService.Persistence.Migrations
                 {
                     b.HasOne("AutenticacionService.Domain.Base.UserBase", "User")
                         .WithOne()
-                        .HasForeignKey("AutenticacionService.Domain.Entities.UserClient", "UserId");
+                        .HasForeignKey("AutenticacionService.Domain.Entities.UserClient", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
