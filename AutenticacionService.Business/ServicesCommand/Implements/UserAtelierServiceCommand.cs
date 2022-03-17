@@ -3,25 +3,25 @@ using AutenticacionService.Business.ServicesCommand.Interfaces;
 using AutenticacionService.Domain.Base;
 using AutenticacionService.Domain.Entities;
 using AutenticacionService.Domain.Models;
-using AutenticacionService.Persistence.UnitOfWork;
 using AutenticacionService.Persistence.Handlers;
+using AutenticacionService.Persistence.UnitOfWork;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Net;
 using System.Threading.Tasks;
-using System;
 using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Business.ServicesCommand.Implements
 {
-    public class UserClientServiceCommand : IUserClientServiceCommand
+    public class UserAtelierServiceCommand : IUserAtelierServiceCommand
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly UserManager<UserBase> _userManager;
         private readonly SignInManager<UserBase> _signInManager;
 
-        public UserClientServiceCommand(
+        public UserAtelierServiceCommand(
             IUnitOfWork uow, 
             IMapper mapper, 
             UserManager<UserBase> userManager, 
@@ -33,26 +33,39 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             _signInManager = signInManager;
         }
 
-        public async Task<UserClientRead> Create(UserClientCreate userClientCreate)
+        public async Task<UserAtelierRead> CreateOwner(UserOwnerCreate userOwnerCreate)
+        {
+            var userBase = _mapper.Map<UserBase>(userOwnerCreate);
+            var userAtelier = _mapper.Map<UserAtelier>(userOwnerCreate);
+            var result = await Create(userBase, userAtelier, userOwnerCreate.Password);
+            return result;
+        }
+
+        public async Task<UserAtelierRead> CreateTechnician(UserTechnicianCreate userTechnicianCreate)
+        {
+            var userBase = _mapper.Map<UserBase>(userTechnicianCreate);
+            var userAtelier = _mapper.Map<UserAtelier>(userTechnicianCreate);
+            var result = await Create(userBase, userAtelier, userTechnicianCreate.Password);
+            return result;
+        }
+
+        private async Task<UserAtelierRead> Create(UserBase userBase, UserAtelier userAtelier, string password)
         {
             try
             {
-                var userBase = _mapper.Map<UserBase>(userClientCreate);
-                string userPassword = userClientCreate.Password;
-                var createdUser = await _userManager.CreateAsync(userBase, userPassword);
+                var createdUser = await _userManager.CreateAsync(userBase, password);
 
                 if (!createdUser.Succeeded) return null;
 
                 var user = await _userManager.FindByEmailAsync(userBase.Email);
-                var userClient = _mapper.Map<UserClient>(userClientCreate);
-                userClient.UserId = user.Id;
-                var createdUserClient = await _uow.userClientRepository.Add(userClient);
+                userAtelier.UserId = user.Id;
+                var createdUserAtelier = await _uow.userAtelierRepository.Add(userAtelier);
 
-                if (createdUserClient == null) return null;
+                if (createdUserAtelier == null) return null;
 
                 await _uow.SaveChangesAsync();
-                var userClientRead = _mapper.Map<UserClientRead>(createdUserClient);
-                return userClientRead;
+                var userAtelierRead = _mapper.Map<UserAtelierRead>(createdUserAtelier);
+                return userAtelierRead;
             }
             catch (RepositoryException ex)
             {
@@ -61,8 +74,8 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             catch (Exception ex)
             {
                 throw new ServiceException(
-                    HttpStatusCode.InternalServerError, 
-                    ErrorsCode.SIGN_UP_ERROR, 
+                    HttpStatusCode.InternalServerError,
+                    ErrorsCode.SIGN_UP_ERROR,
                     ErrorMessages.SIGN_UP_ERROR,
                     ex);
             }

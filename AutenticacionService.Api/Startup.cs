@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using AutenticacionService.Api.ApiConventions;
+using AutenticacionService.Api.Extensions;
 using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.Mapper;
 using AutenticacionService.Business.ServicesCommand.Implements;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
+using AutenticacionService.Business.ServicesQuerys.Implements;
+using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Base;
 using AutenticacionService.Persistence.Context;
 using AutenticacionService.Persistence.Repositories.Implements;
@@ -44,6 +44,7 @@ namespace AutenticacionService.Api
             // db connection
             services.AddDbContext<AuthDbContext>(
                 opts => opts.UseSqlServer(Configuration.GetConnectionString("LocalConnection"))
+                            //.LogTo(Console.WriteLine)
                 );
 
             // ms identity
@@ -56,6 +57,7 @@ namespace AutenticacionService.Api
                     opts.Password.RequireDigit = true;
                     opts.Password.RequireNonAlphanumeric = false;
                     opts.User.RequireUniqueEmail = true;
+                    opts.User.AllowedUserNameCharacters = "abcdefghijklmnÒopqrstuvwxyzABCDEFGHIJKLMN—OPQRSTUVWXYZ0123456789-._@+·ÈÌÛ˙¸¡…Õ”⁄‹";
                 })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
@@ -63,12 +65,16 @@ namespace AutenticacionService.Api
             // repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserClientRepository, UserClientRepository>();
+            services.AddScoped<IUserAtelierRepository, UserAtelierRepository>();
 
             // unit of work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // services
             services.AddScoped<IUserClientServiceCommand, UserClientServiceCommand>();
+            services.AddScoped<IUserAtelierServiceCommand, UserAtelierServiceCommand>();
+            services.AddScoped<IUserClientServiceQuery, UserClientServiceQuery>();
+            services.AddScoped<IUserAtelierServiceQuery, UserAtelierServiceQuery>();
             services.AddScoped<TokenBuilder>();
 
             // mapper
@@ -145,7 +151,12 @@ namespace AutenticacionService.Api
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/error-development");
+            }
+            else
+            {
+                app.UseExceptionHandler("/error-development");
             }
 
             app.UseCors("All");

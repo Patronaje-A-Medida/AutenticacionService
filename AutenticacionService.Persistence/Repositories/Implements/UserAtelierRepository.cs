@@ -12,21 +12,21 @@ using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Persistence.Repositories.Implements
 {
-    public class UserClientRepository : Repository<UserClient>, IUserClientRepository
+    public class UserAtelierRepository : Repository<UserAtelier>, IUserAtelierRepository
     {
-        public UserClientRepository(AuthDbContext context) : base(context)
+        public UserAtelierRepository(AuthDbContext context) : base(context)
         {
         }
 
-        public async Task<UserClient> GetByUserId(string userId)
+        public async Task<UserAtelier> GetByUserId_Role(string userId, string role)
         {
             try
             {
-                var result = await _context.UserClients
+                var result = await _context.UserAteliers
                 .AsNoTracking()
                 .Include(u => u.User)
                 .Where(u => u.UserId.Equals(userId))
-                .Where(u => u.User.Role.Equals(RolesUtil.CLIENT))
+                .Where(u => u.User.Role.Equals(role))
                 .Where(u => u.Status && u.User.Status.Equals(StatusUtil.USER_ACTIVE))
                 .FirstOrDefaultAsync();
 

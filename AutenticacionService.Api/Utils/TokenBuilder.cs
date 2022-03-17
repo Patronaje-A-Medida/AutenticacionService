@@ -26,15 +26,27 @@ namespace AutenticacionService.Api.Utils
 
             return new UserClientToken
             {
-                Id = userClientRead.Id,
-                Email = userClientRead.Email,
-                NameUser = userClientRead.NameUser,
-                LastNameUser = userClientRead.LastNameUser,
-                Height = userClientRead.Height,
-                Phone = userClientRead.Phone,
-                Role = userClientRead.Role,
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = token.ValidTo,
+                UserInfo = userClientRead,
+                UserToken = new UserToken
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expiration = token.ValidTo
+                }
+            };
+        }
+
+        public UserAtelierToken BuildAtelierToken(UserAtelierRead userAtelierRead)
+        {
+            var token = BuildToken(userAtelierRead.UserId, userAtelierRead.Email, userAtelierRead.Role);
+
+            return new UserAtelierToken
+            {
+                UserInfo = userAtelierRead,
+                UserToken = new UserToken
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expiration = token.ValidTo
+                }
             };
         }
 

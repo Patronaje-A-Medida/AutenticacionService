@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace AutenticacionService.Persistence.Repositories.Interfaces
 {
-    public interface IUserClientRepository : IRepository<UserClient>
+    public interface IUserAtelierRepository : IRepository<UserAtelier>
     {
-        Task<UserClient> GetByUserId(string userId);
+        Task<UserAtelier> GetByUserId_Role(string userId, string role);
     }
 }

@@ -1,71 +1,132 @@
-﻿using AutenticacionService.Business.ServicesCommand.Interfaces;
+﻿using AutenticacionService.Api.Utils;
+using AutenticacionService.Business.Handlers;
+using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
+using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Api.Controllers.v1
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/sign-in")]
+    [Produces("application/json")]
     public class SignInController : ControllerBase
     {
-        private readonly IUserClientServiceCommand _serviceCommand;
-        private readonly IConfiguration _configuration;
+        private readonly IUserClientServiceQuery _userClientServiceQuery;
+        private readonly IUserAtelierServiceQuery _userAtelierServiceQuery;
+        private readonly TokenBuilder _tokenBuilder;
 
-        public SignInController(IUserClientServiceCommand serviceCommand, IConfiguration configuration)
+        public SignInController(
+            IUserClientServiceQuery userClientServiceQuery, 
+            IUserAtelierServiceQuery userAtelierServiceQuery, 
+            TokenBuilder tokenBuilder)
         {
-            _serviceCommand = serviceCommand;
-            _configuration = configuration;
+            _userClientServiceQuery = userClientServiceQuery;
+            _userAtelierServiceQuery = userAtelierServiceQuery;
+            _tokenBuilder = tokenBuilder;
         }
 
-        /*[HttpPost()]
-        public async Task<ActionResult<UserToken>> SignInUserClient([FromBody] UserClientCreate)
+        [HttpPost("users-client")]
+        [ProducesResponseType(typeof(UserClientToken), 200)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 400)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 500)]
+        public async Task<ActionResult<UserClientToken>> SignInUserClient([FromBody] UserLogin userLogin)
         {
-
-        }*/
-
-        private UserToken BuildToken(UserClientRead userClientRead)
-        {
-            var claims = new List<Claim>
+            try
             {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userClientRead.Email),
-                new Claim(ClaimTypes.NameIdentifier, userClientRead.UserId),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, userClientRead.Role)
-            };
+                if (!ModelState.IsValid)
+                {
+                    string err = string.Join(
+                        "; ",
+                        ModelState.Values
+                            .SelectMany(x => x.Errors)
+                            .Select(x => x.ErrorMessage));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddHours(1);
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.INVALID_MODEL_ERROR,
+                        message = err
+                    });
+                }
 
-            JwtSecurityToken token = new JwtSecurityToken(
-                issuer: null,
-                audience: null,
-                claims: claims,
-                expires: expiration,
-                signingCredentials: creds
-            );
-            
-            return new UserClientToken
+                var result = await _userClientServiceQuery.SignIn(userLogin);
+
+                if (result == null)
+                {
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.LOGIN_USER_INVALID,
+                        message = ErrorMessages.LOGIN_USER_INVALID
+                    });
+                }
+
+                var userToken = _tokenBuilder.BuildClientToken(result);
+                return Ok(userToken);
+            }
+            catch (ServiceException ex)
             {
-                Id = userClientRead.Id,
-                Email = userClientRead.Email,
-                NameUser = userClientRead.NameUser,
-                LastNameUser = userClientRead.LastNameUser,
-                Height = userClientRead.Height,
-                Phone = userClientRead.Phone,
-                Role = userClientRead.Role,
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
-            };
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+
+        [HttpPost("users-atelier")]
+        [ProducesResponseType(typeof(UserAtelierToken), 200)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 400)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 500)]
+        public async Task<ActionResult<UserAtelierToken>> SignInUserAtelier([FromBody] UserLogin userLogin)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    string err = string.Join(
+                        "; ",
+                        ModelState.Values
+                            .SelectMany(x => x.Errors)
+                            .Select(x => x.ErrorMessage));
+
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.INVALID_MODEL_ERROR,
+                        message = err
+                    });
+                }
+
+                var result = await _userAtelierServiceQuery.SignIn(userLogin);
+
+                if (result == null)
+                {
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.LOGIN_USER_INVALID,
+                        message = ErrorMessages.LOGIN_USER_INVALID
+                    });
+                }
+
+                var userToken = _tokenBuilder.BuildAtelierToken(result);
+                return Ok(userToken);
+            }
+            catch (ServiceException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }

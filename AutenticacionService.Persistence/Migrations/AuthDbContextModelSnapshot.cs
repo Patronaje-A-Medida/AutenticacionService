@@ -103,6 +103,107 @@ namespace AutenticacionService.Persistence.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("AutenticacionService.Domain.Entities.Atelier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset(7)");
+
+                    b.Property<string>("DescriptionAtelier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset(7)");
+
+                    b.Property<string>("NameAtelier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RucAtelier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ateliers");
+                });
+
+            modelBuilder.Entity("AutenticacionService.Domain.Entities.UserAtelier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AtelierId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BossId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset(7)");
+
+                    b.Property<string>("Dni")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset(7)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AtelierId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserAteliers");
+                });
+
             modelBuilder.Entity("AutenticacionService.Domain.Entities.UserClient", b =>
                 {
                     b.Property<int>("Id")
@@ -129,14 +230,17 @@ namespace AutenticacionService.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(13)");
 
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("UserClients");
                 });
@@ -272,11 +376,32 @@ namespace AutenticacionService.Persistence.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("AutenticacionService.Domain.Entities.UserAtelier", b =>
+                {
+                    b.HasOne("AutenticacionService.Domain.Entities.Atelier", "Atelier")
+                        .WithMany("Employees")
+                        .HasForeignKey("AtelierId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("AutenticacionService.Domain.Base.UserBase", "User")
+                        .WithOne()
+                        .HasForeignKey("AutenticacionService.Domain.Entities.UserAtelier", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atelier");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("AutenticacionService.Domain.Entities.UserClient", b =>
                 {
                     b.HasOne("AutenticacionService.Domain.Base.UserBase", "User")
                         .WithOne()
-                        .HasForeignKey("AutenticacionService.Domain.Entities.UserClient", "UserId");
+                        .HasForeignKey("AutenticacionService.Domain.Entities.UserClient", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -330,6 +455,11 @@ namespace AutenticacionService.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AutenticacionService.Domain.Entities.Atelier", b =>
+                {
+                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AutenticacionService.Persistence.Migrations
 {
-    public partial class TestCinco : Migration
+    public partial class InitialAuthDemo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,6 +49,29 @@ namespace AutenticacionService.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ateliers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameAtelier = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    RucAtelier = table.Column<string>(type: "nvarchar(11)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    District = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionAtelier = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ateliers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -165,11 +188,12 @@ namespace AutenticacionService.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Height = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(13)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", nullable: true)
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,6 +202,40 @@ namespace AutenticacionService.Persistence.Migrations
                         name: "FK_UserClients_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAteliers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Role = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    Dni = table.Column<string>(type: "nvarchar(8)", nullable: false),
+                    BossId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AtelierId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAteliers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserAteliers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAteliers_Ateliers_AtelierId",
+                        column: x => x.AtelierId,
+                        principalTable: "Ateliers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -222,11 +280,21 @@ namespace AutenticacionService.Persistence.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserAteliers_AtelierId",
+                table: "UserAteliers",
+                column: "AtelierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAteliers_UserId",
+                table: "UserAteliers",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserClients_UserId",
                 table: "UserClients",
                 column: "UserId",
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -247,10 +315,16 @@ namespace AutenticacionService.Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "UserAteliers");
+
+            migrationBuilder.DropTable(
                 name: "UserClients");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Ateliers");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
