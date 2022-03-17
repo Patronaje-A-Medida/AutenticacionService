@@ -156,7 +156,7 @@ namespace AutenticacionService.Api
             }
             else
             {
-                app.UseExceptionHandler("/error");
+                app.UseExceptionHandler("/error-development");
             }
 
             app.UseCors("All");

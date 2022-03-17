@@ -22,10 +22,10 @@ namespace AutenticacionService.Api.Controllers.v1
         [Route("error-development")]
         public IActionResult HandleErrorDevelopment([FromServices] IWebHostEnvironment env)
         {
-            if (!env.IsDevelopment())
+            /*if (!env.IsDevelopment())
             {
                 return NotFound();
-            }
+            }*/
 
             var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()!.Error;
             ErrorDevDetail errorResponse;
