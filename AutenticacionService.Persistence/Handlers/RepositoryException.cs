@@ -9,6 +9,7 @@ namespace AutenticacionService.Persistence.Handlers
     {
         public HttpStatusCode StatusCode { get; private set; }
         public int ErrorCode { get; private set; }
+        public string RepositoryMessage { get; private set; }
         public string ContentType { get; private set; }
 
         public RepositoryException(HttpStatusCode statusCode, int errorCode, string message) : base(message)
@@ -18,8 +19,9 @@ namespace AutenticacionService.Persistence.Handlers
             ContentType = @"application/json";
         }
 
-        public RepositoryException(HttpStatusCode statusCode, int errorCode, Exception inner) : this(statusCode, errorCode, inner.ToString())
+        public RepositoryException(HttpStatusCode statusCode, int errorCode, string message, Exception inner) : this(statusCode, errorCode, inner.Message)
         {
+            RepositoryMessage = message;
             ContentType = @"application/json";
         }
     }

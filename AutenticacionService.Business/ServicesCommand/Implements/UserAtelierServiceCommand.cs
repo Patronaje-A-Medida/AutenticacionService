@@ -1,12 +1,16 @@
-﻿using AutenticacionService.Business.ServicesCommand.Interfaces;
+﻿using AutenticacionService.Business.Handlers;
+using AutenticacionService.Business.ServicesCommand.Interfaces;
 using AutenticacionService.Domain.Base;
 using AutenticacionService.Domain.Entities;
 using AutenticacionService.Domain.Models;
+using AutenticacionService.Persistence.Handlers;
 using AutenticacionService.Persistence.UnitOfWork;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Net;
 using System.Threading.Tasks;
+using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Business.ServicesCommand.Implements
 {
@@ -47,19 +51,34 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
 
         private async Task<UserAtelierRead> Create(UserBase userBase, UserAtelier userAtelier, string password)
         {
-            var createdUser = await _userManager.CreateAsync(userBase, password);
+            try
+            {
+                var createdUser = await _userManager.CreateAsync(userBase, password);
 
-            if (!createdUser.Succeeded) throw new Exception("error userbase");
+                if (!createdUser.Succeeded) return null;
 
-            var user = await _userManager.FindByEmailAsync(userBase.Email);
-            userAtelier.UserId = user.Id;
-            var createdUserAtelier = await _uow.userAtelierRepository.Add(userAtelier);
+                var user = await _userManager.FindByEmailAsync(userBase.Email);
+                userAtelier.UserId = user.Id;
+                var createdUserAtelier = await _uow.userAtelierRepository.Add(userAtelier);
 
-            if (createdUserAtelier == null) throw new Exception("error useratelier");
+                if (createdUserAtelier == null) return null;
 
-            await _uow.SaveChangesAsync();
-            var userAtelierRead = _mapper.Map<UserAtelierRead>(createdUserAtelier);
-            return userAtelierRead;
+                await _uow.SaveChangesAsync();
+                var userAtelierRead = _mapper.Map<UserAtelierRead>(createdUserAtelier);
+                return userAtelierRead;
+            }
+            catch (RepositoryException ex)
+            {
+                throw new ServiceException(HttpStatusCode.InternalServerError, ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(
+                    HttpStatusCode.InternalServerError,
+                    ErrorsCode.SIGN_UP_ERROR,
+                    ErrorMessages.SIGN_UP_ERROR,
+                    ex);
+            }
         }
     }
 }

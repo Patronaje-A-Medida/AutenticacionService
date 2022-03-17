@@ -41,29 +41,30 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
                 string userPassword = userClientCreate.Password;
                 var createdUser = await _userManager.CreateAsync(userBase, userPassword);
 
-                if (!createdUser.Succeeded) 
-                    throw new ServiceException(HttpStatusCode.InternalServerError,
-                        ErrorsCode.USER_REGISTER_FAILED, ErrorMessages.USER_REGISTER_FAILED);
+                if (!createdUser.Succeeded) return null;
 
                 var user = await _userManager.FindByEmailAsync(userBase.Email);
                 var userClient = _mapper.Map<UserClient>(userClientCreate);
                 userClient.UserId = user.Id;
                 var createdUserClient = await _uow.userClientRepository.Add(userClient);
+
+                if (createdUserClient == null) return null;
+
                 await _uow.SaveChangesAsync();
                 var userClientRead = _mapper.Map<UserClientRead>(createdUserClient);
                 return userClientRead;
             }
-            catch (RepositoryException repoEx)
+            catch (RepositoryException ex)
             {
-                throw new ServiceException(HttpStatusCode.InternalServerError, repoEx);
+                throw new ServiceException(HttpStatusCode.InternalServerError, ex);
             }
-            catch (ServiceException servEx)
+            catch (Exception ex)
             {
-                throw servEx;
-            }
-            catch (Exception)
-            {
-                throw new ServiceException(HttpStatusCode.InternalServerError, ErrorsCode.GENERIC_ERROR, ErrorMessages.GENERIC_ERROR);
+                throw new ServiceException(
+                    HttpStatusCode.InternalServerError, 
+                    ErrorsCode.SIGN_UP_ERROR, 
+                    ErrorMessages.SIGN_UP_ERROR,
+                    ex);
             }
         }
     }

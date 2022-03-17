@@ -57,7 +57,7 @@ namespace AutenticacionService.Api
                     opts.Password.RequireDigit = true;
                     opts.Password.RequireNonAlphanumeric = false;
                     opts.User.RequireUniqueEmail = true;
-                    opts.User.AllowedUserNameCharacters = "abcdefghijklmnÒopqrstuvwxyzABCDEFGHIJKLMN—OPQRSTUVWXYZ0123456789-._@+·ÈÌÛ˙¡…Õ”⁄";
+                    opts.User.AllowedUserNameCharacters = "abcdefghijklmnÒopqrstuvwxyzABCDEFGHIJKLMN—OPQRSTUVWXYZ0123456789-._@+·ÈÌÛ˙¸¡…Õ”⁄‹";
                 })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
@@ -152,9 +152,12 @@ namespace AutenticacionService.Api
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/error-development");
             }
-
-            app.UseExceptionMiddleware();
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
 
             app.UseCors("All");
 

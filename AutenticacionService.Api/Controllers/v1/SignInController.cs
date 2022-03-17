@@ -1,9 +1,13 @@
 ﻿using AutenticacionService.Api.Utils;
+using AutenticacionService.Business.Handlers;
 using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Api.Controllers.v1
 {
@@ -28,45 +32,100 @@ namespace AutenticacionService.Api.Controllers.v1
 
         [HttpPost("users-client")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 400)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 500)]
         public async Task<ActionResult<UserClientToken>> SignInUserClient([FromBody] UserLogin userLogin)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                string err = string.Join(
-                    "; ",
-                    ModelState.Values
-                        .SelectMany(x => x.Errors)
-                        .Select(x => x.ErrorMessage));
+                if (!ModelState.IsValid)
+                {
+                    string err = string.Join(
+                        "; ",
+                        ModelState.Values
+                            .SelectMany(x => x.Errors)
+                            .Select(x => x.ErrorMessage));
 
-                return BadRequest(new { StatusCode = 400, ErrorCode = 10001, ErroMessage = err });
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.INVALID_MODEL_ERROR,
+                        message = err
+                    });
+                }
+
+                var result = await _userClientServiceQuery.SignIn(userLogin);
+
+                if (result == null)
+                {
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.LOGIN_USER_INVALID,
+                        message = ErrorMessages.LOGIN_USER_INVALID
+                    });
+                }
+
+                var userToken = _tokenBuilder.BuildClientToken(result);
+                return Ok(userToken);
             }
-
-            var result = await _userClientServiceQuery.SignIn(userLogin);
-            var userToken = _tokenBuilder.BuildClientToken(result);
-            return Ok(userToken);
+            catch (ServiceException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPost("users-atelier")]
         [ProducesResponseType(typeof(UserAtelierToken), 200)]
-        [ProducesResponseType(typeof(ErrorDetail), 400)]
-        [ProducesResponseType(typeof(ErrorDetail), 500)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 400)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 500)]
         public async Task<ActionResult<UserAtelierToken>> SignInUserAtelier([FromBody] UserLogin userLogin)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                string err = string.Join(
-                    "; ",
-                    ModelState.Values
-                        .SelectMany(x => x.Errors)
-                        .Select(x => x.ErrorMessage));
+                if (!ModelState.IsValid)
+                {
+                    string err = string.Join(
+                        "; ",
+                        ModelState.Values
+                            .SelectMany(x => x.Errors)
+                            .Select(x => x.ErrorMessage));
 
-                return BadRequest(new { statusCode = 400, errorCode = 10001, erroMessage = err });
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.INVALID_MODEL_ERROR,
+                        message = err
+                    });
+                }
+
+                var result = await _userAtelierServiceQuery.SignIn(userLogin);
+
+                if (result == null)
+                {
+                    return BadRequest(new ErrorDetail
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest,
+                        errorCode = ErrorsCode.LOGIN_USER_INVALID,
+                        message = ErrorMessages.LOGIN_USER_INVALID
+                    });
+                }
+
+                var userToken = _tokenBuilder.BuildAtelierToken(result);
+                return Ok(userToken);
             }
-
-            var result = await _userAtelierServiceQuery.SignIn(userLogin);
-            var userToken = _tokenBuilder.BuildAtelierToken(result);
-            return Ok(userToken);
+            catch (ServiceException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
     }

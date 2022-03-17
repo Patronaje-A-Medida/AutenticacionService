@@ -1,12 +1,16 @@
-﻿using AutenticacionService.Business.ServicesQuerys.Interfaces;
+﻿using AutenticacionService.Business.Handlers;
+using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Domain.Base;
 using AutenticacionService.Domain.Models;
 using AutenticacionService.Domain.Utils;
+using AutenticacionService.Persistence.Handlers;
 using AutenticacionService.Persistence.UnitOfWork;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Net;
 using System.Threading.Tasks;
+using static AutenticacionService.Domain.Utils.ErrorsUtil;
 
 namespace AutenticacionService.Business.ServicesQuerys.Implements
 {
@@ -31,31 +35,46 @@ namespace AutenticacionService.Business.ServicesQuerys.Implements
 
         public async Task<UserAtelierRead> SignIn(UserLogin userLogin)
         {
-            var userBase = await _userManager.FindByEmailAsync(userLogin.Email);
+            try
+            {
+                var userBase = await _userManager.FindByEmailAsync(userLogin.Email);
 
-            if (userBase == null) throw new Exception("que fue loco");
+                if (userBase == null) return null;
 
-            if (!userBase.Role.Equals(RolesUtil.OWNER) && 
-                !userBase.Role.Equals(RolesUtil.TECHNICIAN)) 
-                throw new Exception("error service wrong role");
+                if (!userBase.Role.Equals(RolesUtil.OWNER) &&
+                    !userBase.Role.Equals(RolesUtil.TECHNICIAN))
+                    throw new Exception("error service wrong role");
 
-            var checkPassword = await _userManager.CheckPasswordAsync(userBase, userLogin.Password);
+                var checkPassword = await _userManager.CheckPasswordAsync(userBase, userLogin.Password);
 
-            if (!checkPassword) throw new Exception("error service wrong password");
+                if (!checkPassword) return null;
 
-            var signInResult = await _signInManager.PasswordSignInAsync(
-                  userBase.UserName,
-                  userLogin.Password,
-                  isPersistent: false,
-                  lockoutOnFailure: true);
+                var signInResult = await _signInManager.PasswordSignInAsync(
+                      userBase.UserName,
+                      userLogin.Password,
+                      isPersistent: false,
+                      lockoutOnFailure: true);
 
-            if (!signInResult.Succeeded) throw new Exception("error service sign in");
+                if (!signInResult.Succeeded || signInResult.IsLockedOut) return null;
 
-            if (signInResult.IsLockedOut) throw new Exception("error service user blocked"); // TODO agregar logica de bloqueo
+                // TODO agregar logica de bloqueo
 
-            var userAtelier = await _uow.userAtelierRepository.GetByUserId_Role(userBase.Id, userBase.Role);
-            var userAtelierRead = _mapper.Map<UserAtelierRead>(userAtelier);
-            return userAtelierRead;
+                var userAtelier = await _uow.userAtelierRepository.GetByUserId_Role(userBase.Id, userBase.Role);
+                var userAtelierRead = _mapper.Map<UserAtelierRead>(userAtelier);
+                return userAtelierRead;
+            }
+            catch (RepositoryException ex)
+            {
+                throw new ServiceException(HttpStatusCode.InternalServerError, ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException(
+                   HttpStatusCode.InternalServerError,
+                   ErrorsCode.LOGIN_USER_ERROR,
+                   ErrorMessages.LOGIN_USER_ERROR,
+                   ex);
+            }
         }
     }
 }
