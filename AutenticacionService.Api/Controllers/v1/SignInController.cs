@@ -30,6 +30,12 @@ namespace AutenticacionService.Api.Controllers.v1
             _tokenBuilder = tokenBuilder;
         }
 
+        [HttpGet("prueba-docker")]
+        public IActionResult PruebaDocker()
+        {
+            return Ok("prueba docker");
+        }
+
         [HttpPost("users-client")]
         [ProducesResponseType(typeof(UserClientToken), 200)]
         [ProducesResponseType(typeof(ErrorDevDetail), 400)]
