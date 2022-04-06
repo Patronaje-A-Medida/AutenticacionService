@@ -69,6 +69,17 @@ namespace AutenticacionService.Business.Mapper
             CreateMap<UserTechnicianCreate, UserAtelier>()
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RolesUtil.TECHNICIAN));
 
+            CreateMap<UserClientUpdate, UserClient>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForPath(dest => dest.User.Id, opt => opt.MapFrom(src => src.UserId))
+                .ForPath(dest => dest.User.NameUser, opt => opt.MapFrom(src => src.NameUser))
+                .ForPath(dest => dest.User.UserName, opt => opt.MapFrom(src => src.NameUser))
+                .ForPath(dest => dest.User.NormalizedUserName, opt => opt.MapFrom(src => src.NameUser.ToUpper()))
+                .ForPath(dest => dest.User.LastNameUser, opt => opt.MapFrom(src => src.LastNameUser))
+                .ForMember(dest => dest.Height, opt => opt.MapFrom(src => src.Height))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => true));
+
         }
     }
 }
