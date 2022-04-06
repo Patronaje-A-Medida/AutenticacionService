@@ -18,6 +18,17 @@ namespace AutenticacionService.Persistence.Repositories.Implements
         {
         }
 
+        public async Task<bool> ExistUser(int id)
+        {
+            var exist = await _context.UserClients
+                .Where(x => x.Id == id)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+
+            if (exist == default) return false;
+            else return true;
+        }
+
         public async Task<UserClient> GetByUserId(string userId)
         {
             try

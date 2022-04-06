@@ -220,6 +220,9 @@ namespace AutenticacionService.Persistence.Migrations
                     b.Property<decimal>("Height")
                         .HasColumnType("decimal(6,2)");
 
+                    b.Property<string>("ImageProfile")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(100)");
 

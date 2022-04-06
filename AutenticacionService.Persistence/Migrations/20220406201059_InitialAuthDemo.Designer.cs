@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutenticacionService.Persistence.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20220213215516_InitialAuthDemo")]
+    [Migration("20220406201059_InitialAuthDemo")]
     partial class InitialAuthDemo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,6 +221,9 @@ namespace AutenticacionService.Persistence.Migrations
 
                     b.Property<decimal>("Height")
                         .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("ImageProfile")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(100)");
