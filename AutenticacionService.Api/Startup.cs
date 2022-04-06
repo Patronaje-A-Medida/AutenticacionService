@@ -8,6 +8,7 @@ using AutenticacionService.Business.ServicesCommand.Implements;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
 using AutenticacionService.Business.ServicesQuerys.Implements;
 using AutenticacionService.Business.ServicesQuerys.Interfaces;
+using AutenticacionService.Business.Utils;
 using AutenticacionService.Domain.Base;
 using AutenticacionService.Persistence.Context;
 using AutenticacionService.Persistence.Repositories.Implements;
@@ -61,6 +62,9 @@ namespace AutenticacionService.Api
                 })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
+
+            // config manager
+            services.AddSingleton<IConfigurationManager, ConfigurationManager>();
 
             // repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

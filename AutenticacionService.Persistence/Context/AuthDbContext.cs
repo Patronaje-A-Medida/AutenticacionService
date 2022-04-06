@@ -36,6 +36,7 @@ namespace AutenticacionService.Persistence.Context
                     eb.HasKey(e => e.Id);
                     eb.Property(e => e.Height).HasColumnType("decimal(6,2)").IsRequired();
                     eb.Property(e => e.Phone).HasColumnType("nvarchar(13)").IsRequired();
+                    eb.Property(e => e.ImageProfile).HasColumnType("nvarchar(max)").IsRequired(false);
                     eb.HasOne(e => e.User).WithOne().IsRequired();
                 });
 

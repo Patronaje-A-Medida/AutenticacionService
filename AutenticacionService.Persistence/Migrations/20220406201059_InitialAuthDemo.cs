@@ -188,6 +188,7 @@ namespace AutenticacionService.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Height = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(13)", nullable: false),
+                    ImageProfile = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset(7)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", nullable: true),
