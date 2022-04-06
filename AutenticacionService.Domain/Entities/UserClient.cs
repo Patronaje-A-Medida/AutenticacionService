@@ -7,6 +7,7 @@ namespace AutenticacionService.Domain.Entities
         public int Id { get; set; }
         public decimal Height { get; set; }
         public string Phone { get; set; }
+        public string ImageProfile { get; set; }
 
         // relations
         public string UserId { get; set; }
