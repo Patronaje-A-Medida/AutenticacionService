@@ -138,6 +138,7 @@ namespace AutenticacionService.Api.Controllers.v1
         {
             try
             {
+
                 if (!ModelState.IsValid)
                 {
                     string err = string.Join(
