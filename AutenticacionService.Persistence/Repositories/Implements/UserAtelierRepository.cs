@@ -6,6 +6,7 @@ using AutenticacionService.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using static AutenticacionService.Domain.Utils.ErrorsUtil;
@@ -40,6 +41,18 @@ namespace AutenticacionService.Persistence.Repositories.Implements
                     ErrorMessages.GET_USER_ERROR,
                     ex);
             }
+        }
+
+        public async Task<IEnumerable<UserAtelier>> GetUsersByAtelier(int atelierId)
+        {
+            var usersTechinician = await _context.Set<UserAtelier>()
+                .Include(u => u.User)
+                .Where(u => u.AtelierId == atelierId)
+                .Where(u => u.Role == "TECHNICIAN")
+                .ToListAsync();
+
+            return usersTechinician;
+
         }
     }
 }

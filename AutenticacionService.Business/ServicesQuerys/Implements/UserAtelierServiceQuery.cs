@@ -8,6 +8,7 @@ using AutenticacionService.Persistence.UnitOfWork;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using static AutenticacionService.Domain.Utils.ErrorsUtil;
@@ -75,6 +76,13 @@ namespace AutenticacionService.Business.ServicesQuerys.Implements
                    ErrorMessages.LOGIN_USER_ERROR,
                    ex);
             }
+        }
+
+        public async Task<ICollection<UserAtelierRead>> GetTechniciansbyAtilierId(int atelierId)
+        {
+
+            var results = await _uow.userAtelierRepository.GetUsersByAtelier(atelierId);
+            return _mapper.Map<ICollection<UserAtelierRead>>(results);
         }
     }
 }
