@@ -24,9 +24,10 @@ namespace AutenticacionService.Api.Controllers.v1
 
         [HttpGet("{atelierId}")]
         [ProducesResponseType(typeof(ICollection<UserAtelierRead>), 200)]
-        public async Task<ICollection<UserAtelierRead>> GetAllByGarmentId(int atelierId)
+        public async Task<ActionResult<ICollection<UserAtelierRead>>> GetTechniciansbyAtilierId(int atelierId)
         {
-            return await _userAtelierServiceQuery.GetTechniciansbyAtilierId(atelierId);
+            var result = await _userAtelierServiceQuery.GetTechniciansbyAtilierId(atelierId);
+            return Ok(result);
         }
 
     }

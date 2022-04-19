@@ -45,7 +45,13 @@ namespace AutenticacionService.Persistence.Repositories.Implements
 
         public async Task<IEnumerable<UserAtelier>> GetUsersByAtelier(int atelierId)
         {
-            return await _context.Set<UserAtelier>().Include(u => u.User).Where(u => u.AtelierId == atelierId).ToListAsync();
+            var usersTechinician = await _context.Set<UserAtelier>()
+                .Include(u => u.User)
+                .Where(u => u.AtelierId == atelierId)
+                .Where(u => u.Role == "TECHNICIAN")
+                .ToListAsync();
+
+            return usersTechinician;
 
         }
     }
