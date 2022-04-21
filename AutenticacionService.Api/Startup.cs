@@ -58,7 +58,7 @@ namespace AutenticacionService.Api
                     opts.Password.RequireDigit = true;
                     opts.Password.RequireNonAlphanumeric = false;
                     opts.User.RequireUniqueEmail = true;
-                    opts.User.AllowedUserNameCharacters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789-._@+áéíóúüÁÉÍÓÚÜ";
+                    opts.User.AllowedUserNameCharacters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789-._@+áéíóúüÁÉÍÓÚÜ ";
                 })
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
