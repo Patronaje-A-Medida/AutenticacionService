@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AutenticacionService.Persistence.Migrations
 {
-    public partial class InitialAuthDemo : Migration
+    public partial class InitialDemoAuth : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
