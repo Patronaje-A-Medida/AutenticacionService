@@ -15,6 +15,7 @@ namespace AutenticacionService.Business.Handlers
         {
             ErrorCode = errorCode;
             StatusCode = statusCode;
+            ServiceMessage = message;
             ContentType = @"application/json";
         }
 
