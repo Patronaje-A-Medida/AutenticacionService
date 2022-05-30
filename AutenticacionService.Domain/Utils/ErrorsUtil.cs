@@ -11,6 +11,7 @@ namespace AutenticacionService.Domain.Utils
             public static readonly int GENERIC_ERROR = 10000;
             public static readonly int ADD_CONTEXT_ERROR = 10001;
             public static readonly int INVALID_MODEL_ERROR = 10002;
+            public static readonly int ERROR_SEND_EMAIL = 10003;
 
             public static readonly int USER_REGISTER_FAILED = 10010;
             public static readonly int GET_USER_ERROR = 10011;
@@ -20,6 +21,7 @@ namespace AutenticacionService.Domain.Utils
             public static readonly int SIGN_UP_INVALID = 10015;
             public static readonly int UPDATE_USER_FAILED = 10016;
             public static readonly int GET_USERS_ERROR = 10017;
+            public static readonly int INVALID_EMAIL = 10018;
 
             public static readonly int ADD_IMAGE_PROFILE = 10090;
         }
@@ -29,6 +31,7 @@ namespace AutenticacionService.Domain.Utils
             public static readonly string GENERIC_ERROR_400 = "No se pudo obtener la información requerida";
             public static readonly string GENERIC_ERROR_500 = "Error Interno del Sistema";
             public static readonly string ADD_CONTEXT_ERROR = "No se pudo guardar el registro";
+            public static readonly string ERROR_SEND_EMAIL = "Error al enviar correo electrónico";
 
             public static readonly string USER_REGISTER_FAILED = "No se pudo registrar el usuario";
             public static readonly string GET_USER_ERROR = "No se pudo obtener la información del usuario requerido";
@@ -38,8 +41,10 @@ namespace AutenticacionService.Domain.Utils
             public static readonly string SIGN_UP_INVALID = "No se pudo registrar las credenciales del usuario";
             public static readonly string UPDATE_USER_FAILED = "No se pudo actualizar la información del usuario";
             public static readonly string GET_USERS_ERROR = "No se pudo obtener los empleados solicitados";
+            public static readonly string INVALID_EMAIL = "Error al registrarse, el correo ya está en uso";
 
             public static readonly string ADD_IMAGE_PROFILE = "No se pudo guardar la imagen de perfil del usuario";
+
         }
     }
 }

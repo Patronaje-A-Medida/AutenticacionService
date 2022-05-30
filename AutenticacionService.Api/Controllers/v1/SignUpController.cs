@@ -162,8 +162,8 @@ namespace AutenticacionService.Api.Controllers.v1
                     return BadRequest(new ErrorDetail
                     {
                         statusCode = (int)HttpStatusCode.BadRequest,
-                        errorCode = ErrorsCode.SIGN_UP_INVALID,
-                        message = ErrorMessages.SIGN_UP_INVALID
+                        errorCode = ErrorsCode.SIGN_UP_ERROR,
+                        message = ErrorMessages.SIGN_UP_ERROR
                     });
                 }
 

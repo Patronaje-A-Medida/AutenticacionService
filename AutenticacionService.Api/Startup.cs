@@ -6,6 +6,7 @@ using AutenticacionService.Api.Utils;
 using AutenticacionService.Business.Mapper;
 using AutenticacionService.Business.ServicesCommand.Implements;
 using AutenticacionService.Business.ServicesCommand.Interfaces;
+using AutenticacionService.Business.ServiceSmtp;
 using AutenticacionService.Business.ServicesQuerys.Implements;
 using AutenticacionService.Business.ServicesQuerys.Interfaces;
 using AutenticacionService.Business.Utils;
@@ -79,6 +80,7 @@ namespace AutenticacionService.Api
             services.AddScoped<IUserAtelierServiceCommand, UserAtelierServiceCommand>();
             services.AddScoped<IUserClientServiceQuery, UserClientServiceQuery>();
             services.AddScoped<IUserAtelierServiceQuery, UserAtelierServiceQuery>();
+            services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<TokenBuilder>();
 
             // mapper
