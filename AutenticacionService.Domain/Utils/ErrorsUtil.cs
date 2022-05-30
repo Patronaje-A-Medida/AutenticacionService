@@ -21,6 +21,7 @@ namespace AutenticacionService.Domain.Utils
             public static readonly int SIGN_UP_INVALID = 10015;
             public static readonly int UPDATE_USER_FAILED = 10016;
             public static readonly int GET_USERS_ERROR = 10017;
+            public static readonly int INVALID_EMAIL = 10018;
 
             public static readonly int ADD_IMAGE_PROFILE = 10090;
         }
@@ -40,6 +41,7 @@ namespace AutenticacionService.Domain.Utils
             public static readonly string SIGN_UP_INVALID = "No se pudo registrar las credenciales del usuario";
             public static readonly string UPDATE_USER_FAILED = "No se pudo actualizar la información del usuario";
             public static readonly string GET_USERS_ERROR = "No se pudo obtener los empleados solicitados";
+            public static readonly string INVALID_EMAIL = "Error al registrarse, el correo ya está en uso";
 
             public static readonly string ADD_IMAGE_PROFILE = "No se pudo guardar la imagen de perfil del usuario";
 

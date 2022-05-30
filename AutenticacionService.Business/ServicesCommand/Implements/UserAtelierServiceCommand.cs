@@ -70,6 +70,13 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
         {
             try
             {
+                var existUser = await _userManager.FindByEmailAsync(userBase.Email);
+
+                if (existUser != null)
+                {
+                    throw new ServiceException(HttpStatusCode.Conflict, ErrorsCode.INVALID_EMAIL, ErrorMessages.INVALID_EMAIL);
+                }
+
                 var createdUser = await _userManager.CreateAsync(userBase, password);
 
                 if (!createdUser.Succeeded) return null;
@@ -87,6 +94,10 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             catch (RepositoryException ex)
             {
                 throw new ServiceException(HttpStatusCode.InternalServerError, ex);
+            }
+            catch (ServiceException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
