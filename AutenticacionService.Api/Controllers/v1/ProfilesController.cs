@@ -18,10 +18,12 @@ namespace AutenticacionService.Api.Controllers.v1
     public class ProfilesController : ControllerBase
     {
         private readonly IUserClientServiceCommand _userClientServiceCommand;
+        private readonly IUserAtelierServiceCommand _userAtelierServiceCommand;
 
-        public ProfilesController(IUserClientServiceCommand userClientServiceCommand)
+        public ProfilesController(IUserClientServiceCommand userClientServiceCommand, IUserAtelierServiceCommand userAtelierServiceCommand)
         {
             _userClientServiceCommand = userClientServiceCommand;
+            _userAtelierServiceCommand = userAtelierServiceCommand;
         }
 
         [HttpPost("update-client-profile")]
@@ -104,5 +106,26 @@ namespace AutenticacionService.Api.Controllers.v1
                 throw ex;
             }
         }   
+
+        [HttpPost("reset-password")]
+        [ProducesResponseType(typeof(bool), 200)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 400)]
+        [ProducesResponseType(typeof(ErrorDevDetail), 500)]
+        public async Task<ActionResult<bool>> ResetPassword([FromForm] string userEmail)
+        {
+            try
+            {
+                var result = await _userAtelierServiceCommand.ResetPassword(userEmail);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

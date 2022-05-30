@@ -7,5 +7,6 @@ namespace AutenticacionService.Business.ServicesCommand.Interfaces
     {
         Task<UserAtelierRead> CreateOwner(UserOwnerCreate userOwnerCreate);
         Task<UserAtelierRead> CreateTechnician(UserTechnicianCreate userTechnicianCreate);
+        Task<bool> ResetPassword(string userEmail);
     }
 }

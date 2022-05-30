@@ -109,6 +109,22 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             }
         }
 
+        public async Task<bool> ResetPassword(string userEmail)
+        {
+            var userBase = await _userManager.FindByEmailAsync(userEmail);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(userBase);
+            var pwd = GenerateToken(10);
+            var result = await _userManager.ResetPasswordAsync(userBase, token, pwd);
+
+            if (result.Succeeded)
+            {
+                var message = BuildMessageResetPassword(userBase.Email, pwd);
+                await _emailSender.SendEmail(message);
+            }
+
+            return result.Succeeded;
+        }
+
         private Message BuildMessageCreateTechnician(string email, string userName, string password)
         {
             string subject = "Creación de cuenta personal";
@@ -198,6 +214,50 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             return msg;
         }
 
+        private Message BuildMessageResetPassword(string email, string password)
+        {
+            string subject = "Recuperación de credenciales";
+
+            string content = $"<html>" +
+                $"<head>" +
+                $"<title></title>" +
+                $"</head>" +
+                $"<body>" +
+                $"<table align='center' border='0' cellpadding='0' cellspacing='0' class='deviceWidth' style='width:100%;min-width:100%' width='100%'>" +
+                $"<tbody>" +
+                $"<tr>" +
+                $"<td align='center' bgcolor='#ffffff' vertical-align:='top'>" +
+                $"<table border='0' cellpadding='10' cellspacing='0' class='deviceWidth' style='width:100%;max-width:700px;' width='700'>" +
+                $"<tbody style='color:rgb(74,74,74);font-family:Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px'>" +
+                $"<tr>" +
+                $"<td>" +
+                $"<table align='center' border='0' cellpadding='0' cellspacing='0' class='deviceWidth'>" +
+                $"<tbody>" +
+                $"<tr>" +
+                $"<td><a id='ext-gen1933'><img alt='' src='https://images.email-platform.com/fundacionvsl/PATRONAJE.jpeg' style='opacity: 0.9; width: 320px; max-width: 700px; border-width: 0px; border-style: solid; margin: 0px; height: 270px;' /></a></td>" +
+                $"</tr>" +
+                $"</tbody>" +
+                $"</table>" +
+                $"<p style='text-align: center;'><span style='font-size:18px;'>Las credenciales de su cuenta para el ingreso a la aplicaci&oacute;n han sido restablecidas. Puede acceder a la aplicaci&oacute;n con las siguientes credenciales:</span></p>" +
+                $"<p style='text-align: center;'><span style='font-size:18px;'><strong><span style='color:#e67e22;'>Correo: {email}</span></strong></span></p>" +
+                $"<p style='text-align: center;'><span style='font-size:18px;'><strong><span style='color:#e67e22;'>Contrase&ntilde;a: {password}</span></strong></span></p>" +
+                $"<p style='text-align: center;'>&nbsp;</p>" +
+                $"<p>&nbsp;</p>" +
+                $"</td>" +
+                $"</tr>" +
+                $"</tbody>" +
+                $"</table>" +
+                $"</td>" +
+                $"</tr>" +
+                $"</tbody>" +
+                $"</table>" +
+                $"</body>" +
+                $"</html>";
+
+            var msg = new Message(to: email, subject: subject, content: content);
+            return msg;
+        }
+
         private string GenerateToken(int length)
         {
             using (RNGCryptoServiceProvider cryptRNG = new RNGCryptoServiceProvider())
@@ -208,5 +268,6 @@ namespace AutenticacionService.Business.ServicesCommand.Implements
             }
         }
 
+        
     }
 }
